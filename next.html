@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify - Attendance Tracking App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@100;300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@100;300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Intro Section */
+        .intro {
+            height: 100vh;
+            background: url('./x.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            color: #fff;
+        }
+
+        .intro-text {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 5px;
+            width: 50%;
+            height: 100%;
+            align-items: flex-end;
+            padding-right: 5%;
+        }
+
+        .title {
+            padding-top: 45%;
+            font-size: 3rem;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 300;
+            background: linear-gradient(90deg, #fff, #e74c3c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            font-family: 'Inconsolata', sans-serif;
+        }
+
+        /* Main Section */
+        .main {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .navbar-title {
+            font-size: 1.5rem;
+            font-family: 'Rubik', sans-serif;
+            font-weight: 700;
+        }
+
+        .navbar-links {
+            list-style: none;
+        }
+
+        .navbar-links li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 400;
+            transition: background-color 0.3s; /* Transition for smooth color change */
+        }
+
+        .navbar-links a:hover {
+            background-color: yellow; /* Yellow background on hover */
+        }
+
+        /* Profile icon */
+        .profile-icon {
+            font-size: 24px;
+            margin-right: 5px; /* Adjust spacing as needed */
+        }
+
+        /* Buttons */
+        .button-container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-title">Attendify</div>
+        <ul class="navbar-links">
+            <li><a href="#take-attendance">Take Attendance</a></li>
+            <li><a href="#see-attendance">See Attendance</a></li>
+            <li><a href="#time-table">Time Table</a></li>
+            <li><a href="#profile"><span class="profile-icon">👤</span>Profile</a></li>
+        </ul>
+    </div>
+    <section class="intro">
+        <div class="intro-text">
+            <div class="title">
+                <h1>ATTENDIFY</h1>
+            </div>
+            <div class="subtitle">
+                <h6>- Where Presence Meets Progress -</h6>
+            </div>
+        </div>
+    </section>
+
+    <section class="main" id="take-attendance">
+        <div class="button-container">
+            <button class="button" onclick="location.href='#take-attendance'">Take Attendance</button>
+            <button class="button">See Attendance</button>
+        </div>
+    </section>
+</body>
+</html>
