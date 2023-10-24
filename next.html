@@ -60,45 +60,96 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #2ecc71;
-            color: #fff;
+            background: #fff; /* White background */
+            color: #e74c3c; /* Red text color */
         }
 
         /* Navbar */
-        .navbar {
+
+        header {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
             align-items: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            justify-content: space-between;
+            padding: 0% 2%;
+            background: linear-gradient(90deg, #fff, #e74c3c);
+            color: #ffffff;
         }
 
-        .navbar-title {
-            font-size: 1.5rem;
-            font-family: 'Rubik', sans-serif;
-            font-weight: 700;
+        .logo {
+            flex: 1;
+            text-align: left;
         }
 
-        .navbar-links {
-            list-style: none;
-        }
-
-        .navbar-links li {
-            display: inline;
-            margin-right: 10px;
-        }
-
-        .navbar-links a {
+        .logo a {
+            display: inline-flex;
             text-decoration: none;
-            color: #333;
-            font-weight: 400;
-            transition: background-color 0.3s; /* Transition for smooth color change */
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+.logo img{
+    height: 80px;
+}
+        .nav {
+            flex: 2;
+            text-align: center;
         }
 
-        .navbar-links a:hover {
-            background-color: yellow; /* Yellow background on hover */
+        .nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
+        .nav li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 16px;
+            font-family: 'Rubik', sans-serif;
+            transition: color 0.3s;
+        }
+
+        .nav a.link-secondary {
+            color: #4d5353;
+        }
+
+        .nav a:hover {
+            color: #000000;
+        }
+
+        .text-end {
+            flex: 1;
+            text-align: right;
+        }
+
+        .buttons button {
+            margin-right: 10px;
+            padding: 5px 15px;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+            background-color: transparent;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .buttons button.btn-primary {
+            border-color: #ffffff;
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .buttons button.btn-primary:hover {
+            background: #ffffff;
+            color: #000000;
+        }
         /* Profile icon */
         .profile-icon {
             font-size: 24px;
@@ -123,22 +174,44 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="navbar-title">Attendify</div>
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="../Attendify/.gitignore/Picture1.png" alt="logo">
+                <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
+                <li><a href="#take-attendance" class="nav-link px-2">Take Attendance</a></li>
+                <li><a href="#" class="nav-link px-2">Pricing</a></li>
+                <li><a href="#" class="nav-link px-2">FAQs</a></li>
+                <li><a href="#" class="nav-link px-2">About</a></li>
+            </ul>
+        </nav>
+        <div class="text-end buttons">
+            <button type="button" class="btn btn-primary">👤 Profile</button>
+        </div>
+    </header>
+    <!-- <div class="navbar">
+        <div class="navbar-title">Attendify©</div>
         <ul class="navbar-links">
             <li><a href="#take-attendance">Take Attendance</a></li>
             <li><a href="#see-attendance">See Attendance</a></li>
             <li><a href="#time-table">Time Table</a></li>
             <li><a href="#profile"><span class="profile-icon">👤</span>Profile</a></li>
         </ul>
-    </div>
+    </div> -->
     <section class="intro">
         <div class="intro-text">
             <div class="title">
-                <h1>ATTENDIFY</h1>
+                <h1>Attendify</h1>
             </div>
             <div class="subtitle">
-                <h6>- Where Presence Meets Progress -</h6>
+                <h6> Where Presence Meets Progress &nbsp; </h6>
             </div>
         </div>
     </section>
