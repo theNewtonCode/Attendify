@@ -1,39 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Face Recognition</title>
+    <meta charset="utf-8">
+    <title>Face Dataset Generator</title>
+    <style>
+        #video-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #video {
+            transform: scaleX(-1);  /* Flip the video horizontally for a more natural appearance */
+        }
+
+        #enrolmentForm {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Face Recognition</h1>
+    <h1>Face Dataset Generator</h1>
+    
     <div id="video-container">
         <video id="video" width="640" height="480" autoplay></video>
     </div>
-    <button id="startButton" onclick="startCapture()">Start Capture</button>
+    
+    <form id="enrolmentForm">
+        <label for="enrolment">Enter Enrolment ID:</label>
+        <input type="text" id="enrolment" name="enrolment" required>
+        <button type="button" onclick="startCamera()">Start Camera</button>
+        <button type="button" onclick="startDataCollection()">Start Data Collection</button>
+        <button type="button" onclick="closeCamera()">Close Camera</button>
+    </form>
+    
+    <div id="status"></div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
         var video = document.getElementById('video');
+        var statusDiv = document.getElementById('status');
+        var stream;
 
-        function startCapture() {
-            var enrolment = prompt("Enter enrolment ID:");
-
+        function startCamera() {
             navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
+                .then(function (videoStream) {
+                    stream = videoStream;
                     video.srcObject = stream;
-                    socket.emit('enrolment', enrolment);
-
-                    socket.on('message', function(message) {
-                        alert(message);
-                        stream.getTracks().forEach(track => track.stop());
-                    });
                 })
-                .catch(function(error) {
-                    console.error('Error accessing camera:', error);
+                .catch(function (err) {
+                    console.error("Error accessing the camera: " + err);
                 });
         }
+
+        function startDataCollection() {
+            var enrolment = document.getElementById('enrolment').value;
+            socket.emit('enrolment', enrolment);
+            statusDiv.innerHTML = 'Data collection in progress...';
+        }
+
+        function closeCamera() {
+            if (stream) {
+                var tracks = stream.getTracks();
+                tracks.forEach(function(track) {
+                    track.stop();
+                });
+                video.srcObject = null;
+                statusDiv.innerHTML = 'Camera closed.';
+            }
+        }
+
+        socket.on('message', function(msg) {
+            statusDiv.innerHTML = msg;
+        });
     </script>
 </body>
 </html>

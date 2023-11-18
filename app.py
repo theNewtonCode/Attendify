@@ -34,7 +34,7 @@ def gen_dataset(enrolment):
             cropped_faces.append(cropped_face)
         return cropped_faces
     
-    cap = cv2.VideoCapture(0)  # Change the camera index if needed
+    cap = cv2.VideoCapture(0) 
     img_id = 0
 
     while True:
@@ -49,12 +49,13 @@ def gen_dataset(enrolment):
             # cv2.imshow("Cropped_Face", face)
             cv2.imwrite(file_path, face)
 
-        if cv2.waitKey(1) == 15 or int(img_id) == 100:
+        if cv2.waitKey(1) == 20 or int(img_id) == 100:
             break
 
     cap.release()
     cv2.destroyAllWindows()
     print("Dataset Creation Completed")
+
 
 @socketio.on('enrolment')
 def handle_enrolment(enrolment):
