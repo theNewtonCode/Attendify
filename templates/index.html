@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+</head>
+<body>
+    <h1>Face Recognition</h1>
+    <div id="video-container">
+        <video id="video" width="640" height="480" autoplay></video>
+    </div>
+    <button id="startButton" onclick="startCapture()">Start Capture</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        var video = document.getElementById('video');
+
+        function startCapture() {
+            var enrolment = prompt("Enter enrolment ID:");
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    socket.emit('enrolment', enrolment);
+
+                    socket.on('message', function(message) {
+                        alert(message);
+                        stream.getTracks().forEach(track => track.stop());
+                    });
+                })
+                .catch(function(error) {
+                    console.error('Error accessing camera:', error);
+                });
+        }
+    </script>
+</body>
+</html>
