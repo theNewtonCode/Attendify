@@ -5,7 +5,7 @@ from flask_socketio import SocketIO, emit
 from flask import request, session, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from database_details import dbhost, dbuser, dbpassword
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 
@@ -83,9 +83,37 @@ def about():
     else:
         return redirect(url_for('loginpage'))
 
-@app.route('/addstudent')
+students_path = "Attendify/Students"  # Replace with the actual path to the "students" directory
+
+
+
+@app.route('/addstudent', methods=['POST', 'GET'])
 def addstudent():
-    return render_template('addStudent.html')
+   if 'user_name' in session:
+        if request.method == 'POST':
+        # Extract form data
+            student_id = request.form['studentID'].upper()
+            name = request.form['Name'].upper()
+            year = request.form['year']
+            group = request.form['group'].upper()
+            batch = request.form['batch'].upper()
+            reg_face = False
+
+            if os.path.exists(students_path):
+    # Get the list of folders inside the "students" directory
+                student_folders = [folder for folder in os.listdir(students_path) if os.path.isdir(os.path.join(students_path, folder))]
+
+                if(student_id in student_folders):
+                    reg_face = True
+
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO students (student_id, name, year, student_group, batch, reg_face) VALUES (%s, %s, %s, %s, %s, %s)",
+                        (student_id, name, year, group, batch, reg_face))
+            mysql.connection.commit()
+            cur.close()
+        return render_template('addStudent.html')
+   else:
+       return redirect(url_for('index'))
 
 @app.route('/addfaculty')
 def addfaculty():
@@ -114,22 +142,38 @@ def facultyprofile():
             class_types = [cd['class_type'] for cd in class_details]
             
 
+            # Assuming currentclasstime and second_closest_classtime are initially set to None
             currentclasstime = None
+            second_closest_classtime = None
 
             # Retrieve current time
             current_time = datetime.now().time()
+            # Convert current_time to timedelta for comparison
+            current_time_delta = timedelta(hours=current_time.hour, minutes=current_time.minute)
 
-            # Iterate through timings to find the closest one to the current time
+
+            # Iterate through timings to find the closest and second closest timings to the current time
+            # Iterate through timings to find the closest and second closest timings to the current time
             for timing in timings:
-                if currentclasstime is None or abs((timing.hour * 60 + timing.minute) - (current_time.hour * 60 + current_time.minute)) < abs((currentclasstime.hour * 60 + currentclasstime.minute) - (current_time.hour * 60 + current_time.minute)):
+                if currentclasstime is None or abs(timing.total_seconds() - current_time_delta.total_seconds()) < abs(currentclasstime.total_seconds() - current_time_delta.total_seconds()):
+                    second_closest_classtime = currentclasstime
                     currentclasstime = timing
-        return render_template('faculty.html', name =faculty['name'],  email = faculty['email'], depart = faculty['depart'], timings=timings, classrooms=classrooms, batches=batches, groups=groups, class_types=class_types)
+                elif second_closest_classtime is None or abs(timing.total_seconds() - current_time_delta.total_seconds()) < abs(second_closest_classtime.total_seconds() - current_time_delta.total_seconds()):
+                    second_closest_classtime = timing
+
+
+            print(currentclasstime)
+            print(second_closest_classtime)
+        return render_template('faculty.html', name =faculty['name'],  email = faculty['email'], depart = faculty['depart'], timings=timings, classrooms=classrooms, batches=batches, groups=groups, class_types=class_types, currentclasstime= currentclasstime, nextclasstime=second_closest_classtime)
     
     return render_template('faculty.html')
 
 @app.route('/Adminhome')
 def admin():
-    return render_template('Admin.html')
+    if 'user_name' in session:
+        if 'admin' in session['username']:
+            return render_template('Admin.html', name=session['user_name'])
+    return redirect(url_for('logout'))
 
 @app.route('/showattendance')
 def showattendance():

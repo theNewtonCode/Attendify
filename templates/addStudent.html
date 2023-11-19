@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('bueateasy.jpg'); /* Replace with your background image URL */
+            background-image: url('../static/imgs/bueateasy.jpg'); /* Replace with your background image URL */
             background-size: cover;
             margin: 0;
             padding: 0;
@@ -87,27 +87,20 @@ button:hover {
 <body>
     <header>
         <div style="width: 80%; display: flex; ">
-            <img src="univ-logo.png" alt="University Logo"> <!-- Replace with your university logo URL -->
+            <img src="../static/imgs/univ-logo.png" alt="University Logo"> <!-- Replace with your university logo URL -->
             <div>
                 <h2 style="font-weight: 400; color: antiquewhite;"><span style="color: #ffd000c5; font-weight: 600;"> Attendify:</span> Add or Update Student Form <span style="color: rgba(132, 132, 132, 0.636);">(Accessed via Admin Only)</span></h2> <!-- Replace with your university name -->
             </div>
         </div>
-        <img src="Picture1.png" alt="University Logo" style="opacity: 50%;"> <!-- Replace with your university logo URL -->
+        <img src="../static/imgs/Picture1.png" alt="University Logo" style="opacity: 50%;"> <!-- Replace with your university logo URL -->
     </header>
 
-    <form action="#" method="post">
+    <form action="/addstudent" method="post">
         <label for="studentID">Enrollment ID:</label>
         <input type="text" id="studentID" name="studentID">
 
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required>
-
-        <!-- <label for="course">Select Course:</label>
-        <select id="course" name="course" required>
-            <option value="engineering">BTech CSE</option>
-            <option value="science">BBA</option>
-            <option value="arts">BCA</option>
-        </select> -->
+        <label for="firstName">Name:</label>
+        <input type="text" id="Name" name="Name" required>
 
         <label for="year">Year:</label>
         <input type="text" id="year" name="year" required>
@@ -119,17 +112,10 @@ button:hover {
         <input type="text" id="batch" name="batch" required>
 
         <button type="submit">Submit</button>
-        <button type="button" id="updateBtn">Update Existing Info</button>
-        <a href="Admin.html"><button type="button" id="updateBtn">Home</button></a>
+        <a href="/collectdataset"><button type="button">Register Face</button></a>
+        <a href="/Adminhome"><button type="button">Home</button></a>
     </form>
 
-    <script>
-        // Add JavaScript logic for handling updates if needed
-        document.getElementById('updateBtn').addEventListener('click', function() {
-            // Implement the logic to fetch and populate existing data for the provided student ID
-            alert('Implement update logic here');
-        });
-    </script>
 
 </body>
 </html>

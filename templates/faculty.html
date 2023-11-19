@@ -196,7 +196,7 @@
     </header>
 
     <section>
-        <h2>Profile Details</h2>
+        <h2>Faculty Details</h2>
         <div class="details">
         <img class="fcimg" src="../static/imgs/peopleImgs/x1.jpg" alt="Faculty Photo"> <!-- Replace with the actual path to your faculty photo -->
 <div class="textdetails">
@@ -232,13 +232,14 @@
 
         <div class="current">
         <h2>Current Class</h2>
-        <p><strong>Subject:</strong> Computer Networks</p>
-        <p><strong>Time:</strong> 10:00 AM - 12:00 PM</p>
+        <p>{{class_types[timings.index(currentclasstime)]}}, {{classrooms[timings.index(currentclasstime)]}}</p>
+        <p><strong>Time:</strong>{{currentclasstime}}</p>
         <button class="attendance" onclick="startAttendance()">Start Attendance</button>
+        <button class="attendance" style="background-color: #0091ff;">Show Attendance</button>
     </div>
         <h2>Next Class</h2>
-        <p><strong>Subject:</strong> Database Management</p>
-        <p><strong>Time:</strong> 2:00 PM - 4:00 PM</p>
+        <p>{{class_types[timings.index(nextclasstime)]}}, {{classrooms[timings.index(nextclasstime)]}}</p>
+        <p><strong>Time:</strong>{{nextclasstime}}</p>
     </section>
 
     <script>

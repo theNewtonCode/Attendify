@@ -30,7 +30,14 @@
             </ul>
         </nav>
         <div class="text-end buttons">
-            <button type="button" class="btn btn-primary" onclick="location.href='/facultyprofile'">👤 Profile</button>
+        {% if admin is true %}
+            
+            <button type="button" class="btn btn-primary" 
+            onclick="location.href='/Adminhome'">👤 Profile</button>
+            {% else %}
+            <button type="button" class="btn btn-primary" 
+            onclick="location.href='/facultyprofile'">👤 Profile</button>
+            {% endif %}
         </div>
     </header>
 
@@ -72,7 +79,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;">
            <h1 style="color: black;"> Hello</h1> <h1>Admin!</h1></span>
-           <button class="button" onclick="location.href='/admin'">Admin Page</button>
+           <button class="button" onclick="location.href='/Adminhome'">Admin Page</button>
            <button class="button" onclick="location.href='/change_password'">Change Password</button>
 
 
