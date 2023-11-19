@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Form</title>
+    <title>Student Admission Form</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,7 +47,7 @@
             display: block;
             margin-bottom: 8px;
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            color: #0091ff;
+            color: #ffd000c5;
         }
 
         input, select
@@ -66,7 +66,7 @@
         button {
             margin: 0 10px;
     padding: 13px 40px;
-    background: #0091ff;
+    background: #ffd000c5;
     border: 1px solid white;
     color: #2d2d2d;
     /* border: none; */
@@ -78,7 +78,7 @@
 }
 
 button:hover {
-    background: #ffd000c5; /* Change the background color on hover */
+    background: #0091ff; /* Change the background color on hover */
     transform: scale(1.08);
     color: white; /* Scale the button on hover */
 }
@@ -89,31 +89,25 @@ button:hover {
         <div style="width: 80%; display: flex; ">
             <img src="univ-logo.png" alt="University Logo"> <!-- Replace with your university logo URL -->
             <div>
-                <h2 style="font-weight: 400; color: antiquewhite;"><span style="color: #0091ff; font-weight: 600;"> Attendify:</span> Set/Reset Time Table Form <span style="color: rgba(132, 132, 132, 0.636);">(Accessed via Admin Only)</span></h2> <!-- Replace with your university name -->
+                <h2 style="font-weight: 400; color: antiquewhite;"><span style="color: #ffd000c5; font-weight: 600;"> Attendify:</span> Add or Update Student Form <span style="color: rgba(132, 132, 132, 0.636);">(Accessed via Admin Only)</span></h2> <!-- Replace with your university name -->
             </div>
         </div>
         <img src="Picture1.png" alt="University Logo" style="opacity: 50%;"> <!-- Replace with your university logo URL -->
     </header>
 
     <form action="#" method="post">
-        <label for="studentID">Faculty ID:</label>
+        <label for="studentID">Enrollment ID:</label>
         <input type="text" id="studentID" name="studentID">
 
-        <label for="courseid">Course ID:</label>
-        <input type="text" id="courseid" name="courseid" required>
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required>
 
-        <label for="teachtype">Type:</label>
-        <select id="teachtype" name="teachtype" required>
-            <option value="Lecture">Lecture</option>
-            <option value="Practical">Practical</option>
-            <option value="Tutorial">Tutorial</option>
-        </select>
-
-        <label for="time">Time:</label>
-        <input type="time" id="time" name="time" required>
-
-        <label for="days">Days:</label>
-        <input type="text" id="days" name="days" required>
+        <!-- <label for="course">Select Course:</label>
+        <select id="course" name="course" required>
+            <option value="engineering">BTech CSE</option>
+            <option value="science">BBA</option>
+            <option value="arts">BCA</option>
+        </select> -->
 
         <label for="year">Year:</label>
         <input type="text" id="year" name="year" required>

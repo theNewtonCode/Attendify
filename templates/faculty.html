@@ -178,55 +178,55 @@
     <header>
         <div class="logo">
             <a href="/">
-                <img src="../Attendify/Picture1.png" alt="logo" style="height: 70px; padding: 5px; opacity: 50%;">
+                <img src="../static/imgs/Picture1.png" alt="logo" style="height: 70px; padding: 5px; opacity: 50%;">
                 </svg>
             </a>
         </div>
         <nav class="nav">
             <ul>
-                <li><a href="index.html" class="nav-link px-2">Home</a></li>
+                <li><a href="/" class="nav-link px-2">Home</a></li>
                 <li><a href="#" class="nav-link px-2 link-secondary">Take Attendance</a></li>
-                <li><a href="index.html#about" class="nav-link px-2">About Us</a></li>
-                <li><a href="index.html#about" class="nav-link px-2">Contact Us</a></li>
+                <li><a href="/#about" class="nav-link px-2">About Us</a></li>
+                <li><a href="/#about" class="nav-link px-2">Contact Us</a></li>
             </ul>
         </nav>
         <div class="text-end buttons">
-            <button type="button" class="btn btn-primary">👤 Logout</button>
+            <button type="button" class="btn btn-primary" onclick="location.href='/logout'">👤 Logout</button>
         </div>
     </header>
 
     <section>
         <h2>Profile Details</h2>
         <div class="details">
-        <img class="fcimg" src="peopleImgs/x1.jpg" alt="Faculty Photo"> <!-- Replace with the actual path to your faculty photo -->
+        <img class="fcimg" src="../static/imgs/peopleImgs/x1.jpg" alt="Faculty Photo"> <!-- Replace with the actual path to your faculty photo -->
 <div class="textdetails">
-    <p><strong>Name:</strong> John Doe</p>
-    <p><strong>Department:</strong> Computer Science</p>
-    <p><strong>Email:</strong> john.doe@example.com</p>
+    <p><strong>Name: </strong>{{name}}</p>
+    <p><strong>Department: </strong>{{depart}}</p>
+    <p><strong>Email: </strong> {{email}}</p>
 </div>
 </div>
 
-        <h2>Timetable</h2>
+        <h2>Time Table</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Day</th>
-                    <th>Time</th>
-                    <th>Subject</th>
+                    <th>Timing</th>
+                    <th>Class Type</th>
+                    <th>Class Room</th>
+                    <th>Batch(s)</th>
+                    <th>Group</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Monday</td>
-                    <td>10:00 AM - 12:00 PM</td>
-                    <td>Computer Networks</td>
-                </tr>
-                <tr>
-                    <td>Wednesday</td>
-                    <td>2:00 PM - 4:00 PM</td>
-                    <td>Database Management</td>
-                </tr>
-                <!-- Add more rows for other days and subjects -->
+                {% for i in range(timings|length) %}
+                    <tr>
+                        <td>{{ timings[i] }}</td>
+                        <td>{{ class_types[i] }}</td>
+                        <td>{{ classrooms[i] }}</td>
+                        <td>{{ batches[i] }}</td>
+                        <td>{{ groups[i] }}</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
 
