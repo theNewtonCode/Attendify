@@ -1,5 +1,6 @@
 import os
 import cv2
+import csv
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from flask import request, session, redirect, url_for, flash
@@ -175,9 +176,81 @@ def admin():
             return render_template('Admin.html', name=session['user_name'])
     return redirect(url_for('logout'))
 
-@app.route('/showattendance')
+@app.route('/takeattendance')
+def take_attendance():
+    # Replace these values w
+    # ith your actual data
+    currentclass = "Class A"
+    batches = "Batch 1, Batch 2"
+    total_students = 100
+
+    return render_template('takeattendance.html', currentclass=currentclass, Batches=batches, total=total_students, attdone = False)
+
+
+
+@app.route('/captureattendance', methods=['POST'])
+def captureattendance():
+    # Accessing form data
+    current_class_data = request.form['currentclass']
+    batches_data = request.form['Batches']
+    total_students_data = request.form['total']
+
+    # Get the current date
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    # Perform calculations to get student enrollment data and attendance data
+    # For the purpose of this example, let's assume you have these two lists
+    all_students = ['e21cse', 'e23cse', 'e20cse']
+    present_students = ['e23cse']
+
+    # Create a CSV file with attendance information for each date
+    csv_filename = f"{current_class_data}_{batches_data}_{current_date}.csv"
+    csv_filepath = os.path.join("Attendify/attendance_files", csv_filename)
+
+    # Check if the CSV file already exists
+    csv_exists = os.path.exists(csv_filepath)
+
+    with open(csv_filepath, mode='a', newline='') as csvfile:
+        fieldnames = ['Student', current_date]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        # Write header if the file is new
+        if not csv_exists:
+            writer.writeheader()
+
+        # Write data
+        for student in all_students:
+            attendance_data = 1 if student in present_students else 0
+            row_data = {'Student': student, current_date: attendance_data}
+            writer.writerow(row_data)
+
+    # Return a response or redirect to a success page
+    return render_template('takeattendance.html', currentclass=current_class_data, Batches=batches_data, total=total_students_data, attdone=True, filepath= csv_filepath)
+
+
+@app.route('/showattendance', methods=['POST'])
 def showattendance():
-    return render_template('showattendance.html')
+    # Path to the CSV file
+    current_class_data = request.form['currentclass']
+    batches_data = request.form['Batches']
+    total_students_data = request.form['total']
+    csv_filepath = request.form['filepath']
+
+    # Read CSV file and prepare data for rendering in the template
+    attendance_data = {}
+    dates = []
+    
+    if os.path.exists(csv_filepath):
+        with open(csv_filepath, mode='r') as csvfile:
+            reader = csv.DictReader(csvfile)
+            dates = [header for header in reader.fieldnames if header != 'Student']
+
+            for row in reader:
+                student = row['Student']
+                attendance_values = [row[date] for date in dates]
+                attendance_data[student] = attendance_values
+
+    return render_template('showattendance.html', attendance_data=attendance_data, dates=dates, currentclass=current_class_data,Batches =batches_data, total = total_students_data)
 
 @app.route('/collectdataset')
 def collectdataset():
