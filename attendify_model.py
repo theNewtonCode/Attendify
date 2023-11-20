@@ -82,6 +82,9 @@ class FaceRecognitionModel:
 
         # Save the trained model
         self.classifier.save(self.model_save_path)
+        self.ResultMap = {v: k for k, v in self.train_set.class_indices.items()}  # Update the mapping
+        with open(self.map_save_path, 'wb') as fileWriteStream:
+            pickle.dump(self.ResultMap, fileWriteStream)
 
     def predict_image(self, image_path):
         saved_model_path = self.model_save_path
@@ -97,10 +100,9 @@ class FaceRecognitionModel:
             loaded_object = pickle.load(file)
         return loaded_object[np.argmax(result)]
 
-# # Example usage
-# if __name__ == "__main__":
-#     model = FaceRecognitionModel(train_data_path='Students', test_data_path='Students')
-#     model.train_model(epochs=10)
+
+# model = FaceRecognitionModel(train_data_path='Students', test_data_path='Students')
+# model.train_model(epochs=10)
 
 #     image_path_to_predict = 'E21CSEU0130.292.jpg'
 #     predicted_name = model.predict_image(image_path_to_predict)

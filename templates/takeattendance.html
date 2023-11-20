@@ -83,7 +83,7 @@
             <div class="fixed-size-iframe">
                 <p>Current class: {{ currentclass }} </p>
                 <p>Batches: {{ Batches }}</p>
-                <p>Number of Students: {{total}}</p>
+                <p>Students Present: {{total}}</p>
                 <iframe src="http://10.12.60.98:8080/browserfs.html" frameborder="0"></iframe>
             </div>
             <!-- Include hidden input fields to pass the values to the form -->
@@ -97,10 +97,11 @@
         {% else %}
         <form id="attendanceForm" action="/captureattendance" method="post">
             <div class="fixed-size-iframe">
-                <p>Current class: {{ currentclass }} </p>
-                <p>Batches: {{ Batches }}</p>
-                <p>Number of Students: {{total}}</p>
+                <p>Current class: <span style="color: white;">{{ currentclass }} </span></p>
+                <p>Batches: <span style="color: white;">{{ Batches }}</span></p>
+                <p>Number of Students: <span style="color: white;">{{total}}</span></p>
                 <iframe src="http://10.12.60.98:8080/browserfs.html" frameborder="0"></iframe>
+                <p>Live <span style="color: red;">{{classroom}}</span></p>
             </div>
             <!-- Include hidden input fields to pass the values to the form -->
             <input type="hidden" name="currentclass" value="{{ currentclass }}">

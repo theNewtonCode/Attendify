@@ -7,6 +7,8 @@ from flask import request, session, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from database_details import dbhost, dbuser, dbpassword
 from datetime import datetime, timedelta
+from attendance_from_cam import capture_images, face_cropped_from_list, recognize_faces
+from attendify_model import FaceRecognitionModel
 
 
 
@@ -116,9 +118,6 @@ def addstudent():
    else:
        return redirect(url_for('index'))
 
-@app.route('/addfaculty')
-def addfaculty():
-    return render_template('addfaculty.html')
 
 @app.route('/facultyprofile')
 def facultyprofile():
@@ -176,81 +175,133 @@ def admin():
             return render_template('Admin.html', name=session['user_name'])
     return redirect(url_for('logout'))
 
-@app.route('/takeattendance')
+@app.route('/modeldetails')
+def modeldetails():
+    if 'user_name' in session:
+        if 'admin' in session['username']:
+            return render_template('modeldetail.html', admin=session['user_name'])
+    return redirect(url_for('loginpage'))
+
+@app.route('/retrain')
+def retrain():
+    print("model training started")
+    model = FaceRecognitionModel(train_data_path='Attendify/Students', test_data_path='Attendify/Students')
+    model.train_model(epochs=10)
+    print(model.OutputNeurons)
+    return "Finished Training"
+
+@app.route('/takeattendance', methods=['POST'])
 def take_attendance():
-    # Replace these values w
-    # ith your actual data
-    currentclass = "Class A"
-    batches = "Batch 1, Batch 2"
-    total_students = 100
+    if 'user_name' in session:
+        currentclass = request.form['currentclass']
+        batches = request.form['Batches']
+        classroom = request.form['classroom']
+        bl = batches.split(', ')
 
-    return render_template('takeattendance.html', currentclass=currentclass, Batches=batches, total=total_students, attdone = False)
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT student_id FROM students WHERE batch IN (%s)" % ','.join(['%s' for _ in bl]), tuple(bl))
+        students = cur.fetchall()
+        cur.close()
+        total_students = len(students)
+        student_ids = [student['student_id'] for student in students]
+        # print(student_ids)
 
+        return render_template('takeattendance.html', currentclass=currentclass, Batches=batches, total=total_students, classroom = classroom, attdone = False)
+    
+    return redirect(url_for('index'))
 
 
 @app.route('/captureattendance', methods=['POST'])
 def captureattendance():
-    # Accessing form data
-    current_class_data = request.form['currentclass']
-    batches_data = request.form['Batches']
-    total_students_data = request.form['total']
+    if 'user_name' in session:
+        # Accessing form data
+        current_class_data = request.form['currentclass']
+        batches_data = request.form['Batches']
 
-    # Get the current date
-    current_date = datetime.now().strftime('%Y-%m-%d')
+        # Get the current date
+        current_date = datetime.now().strftime('%Y-%m-%d')
 
-    # Perform calculations to get student enrollment data and attendance data
-    # For the purpose of this example, let's assume you have these two lists
-    all_students = ['e21cse', 'e23cse', 'e20cse']
-    present_students = ['e23cse']
+        # Perform calculations to get student enrollment data and attendance data
+        # For the purpose of this example, let's assume you have these two lists
+        bl = batches_data.split(', ')
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT student_id FROM students WHERE batch IN (%s)" % ','.join(['%s' for _ in bl]), tuple(bl))
+        students = cur.fetchall()
+        cur.close()
 
-    # Create a CSV file with attendance information for each date
-    csv_filename = f"{current_class_data}_{batches_data}_{current_date}.csv"
-    csv_filepath = os.path.join("Attendify/attendance_files", csv_filename)
+        student_ids = [student['student_id'] for student in students]
+        all_students = student_ids
+        url_to_capture = "http://10.12.60.98:8080//shot.jpg"
+        classimages = capture_images(url=url_to_capture, interval_seconds=2, num_images=10)
 
-    # Check if the CSV file already exists
-    csv_exists = os.path.exists(csv_filepath)
+        student_faces = face_cropped_from_list(classimages)
+        main_list = recognize_faces(student_faces)
 
-    with open(csv_filepath, mode='a', newline='') as csvfile:
-        fieldnames = ['Student', current_date]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        flat_list = [item for sublist in main_list for item in sublist]
 
-        # Write header if the file is new
-        if not csv_exists:
-            writer.writeheader()
+        # Count the occurrences of each string
+        count_dict = {}
+        for item in flat_list:
+            count_dict[item] = count_dict.get(item, 0) + 1
 
-        # Write data
-        for student in all_students:
-            attendance_data = 1 if student in present_students else 0
-            row_data = {'Student': student, current_date: attendance_data}
-            writer.writerow(row_data)
+        # Create a list of strings that occur more than 4 times
+        present_students = [key for key, value in count_dict.items() if value > 4]
+        print(present_students)
+        # print(present_students)
+        # present_students = ['E21CSEU0130']
+        total_students_data = len(present_students)
 
-    # Return a response or redirect to a success page
-    return render_template('takeattendance.html', currentclass=current_class_data, Batches=batches_data, total=total_students_data, attdone=True, filepath= csv_filepath)
+        # Create a CSV file with attendance information for each date
+        csv_filename = f"{current_class_data}_{batches_data}_{current_date}.csv"
+        csv_filepath = os.path.join("Attendify/attendance_files", csv_filename)
+
+        # Check if the CSV file already exists
+        csv_exists = os.path.exists(csv_filepath)
+
+        with open(csv_filepath, mode='a', newline='') as csvfile:
+            fieldnames = ['Student', current_date]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            # Write header if the file is new
+            if not csv_exists:
+                writer.writeheader()
+
+            # Write data
+            for student in all_students:
+                attendance_data = 1 if student in present_students else 0
+                row_data = {'Student': student, current_date: attendance_data}
+                writer.writerow(row_data)
+
+        # Return a response or redirect to a success page
+        return render_template('takeattendance.html', currentclass=current_class_data, Batches=batches_data, total=total_students_data, attdone=True, filepath= csv_filepath)
+    return redirect(url_for('loginpage'))
 
 
 @app.route('/showattendance', methods=['POST'])
 def showattendance():
-    # Path to the CSV file
-    current_class_data = request.form['currentclass']
-    batches_data = request.form['Batches']
-    total_students_data = request.form['total']
-    csv_filepath = request.form['filepath']
+    if 'user_name' in session:
+        # Path to the CSV file
+        current_class_data = request.form['currentclass']
+        batches_data = request.form['Batches']
+        total_students_data = request.form['total']
+        csv_filepath = request.form['filepath']
 
-    # Read CSV file and prepare data for rendering in the template
-    attendance_data = {}
-    dates = []
-    
-    if os.path.exists(csv_filepath):
-        with open(csv_filepath, mode='r') as csvfile:
-            reader = csv.DictReader(csvfile)
-            dates = [header for header in reader.fieldnames if header != 'Student']
+        # Read CSV file and prepare data for rendering in the template
+        attendance_data = {}
+        dates = []
+        
+        if os.path.exists(csv_filepath):
+            with open(csv_filepath, mode='r') as csvfile:
+                reader = csv.DictReader(csvfile)
+                dates = [header for header in reader.fieldnames if header != 'Student']
 
-            for row in reader:
-                student = row['Student']
-                attendance_values = [row[date] for date in dates]
-                attendance_data[student] = attendance_values
+                for row in reader:
+                    student = row['Student']
+                    attendance_values = [row[date] for date in dates]
+                    attendance_data[student] = attendance_values
 
-    return render_template('showattendance.html', attendance_data=attendance_data, dates=dates, currentclass=current_class_data,Batches =batches_data, total = total_students_data)
+        return render_template('showattendance.html', attendance_data=attendance_data, dates=dates, currentclass=current_class_data,Batches =batches_data, total = total_students_data)
+    return redirect(url_for('loginpage'))
 
 @app.route('/collectdataset')
 def collectdataset():
@@ -258,7 +309,7 @@ def collectdataset():
 
 def gen_dataset(enrolment):
     # Create a folder with the enrolment name if it doesn't exist
-    student_folder = os.path.join("alexis", enrolment)
+    student_folder = os.path.join("Attendify/Students", enrolment)
     if not os.path.exists(student_folder):
         os.makedirs(student_folder)
     else:
@@ -292,7 +343,7 @@ def gen_dataset(enrolment):
             file_path = os.path.join(student_folder, f"{enrolment}.{img_id}.jpg")
             cv2.imwrite(file_path, face)
 
-        if cv2.waitKey(1) == 15 or int(img_id) == 100:
+        if cv2.waitKey(1) == 15 or int(img_id) == 500:
             break
 
     cap.release()

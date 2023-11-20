@@ -319,19 +319,16 @@ margin-right: 14px;
         <h2>Current Class</h2>
         <p>{{class_types[timings.index(currentclasstime)]}}, {{classrooms[timings.index(currentclasstime)]}}</p>
         <p><strong>Time:</strong>{{currentclasstime}}</p>
-        <button class="attendance" onclick="startAttendance()">Start Attendance</button>
+        <form  action="/takeattendance" method="post"><input type="hidden" name="currentclass" value="{{ class_types[timings.index(currentclasstime)] }}">
+            <input type="hidden" name="Batches" value="{{ batches[timings.index(currentclasstime)] }}">
+            <input type="hidden" name="classroom" value="{{ classrooms[timings.index(currentclasstime)] }}">
+            <button class="attendance" type="submit">Start Attendance</button></form>
     </div>
         <h2>Next Class</h2>
         <p>{{class_types[timings.index(nextclasstime)]}}, {{classrooms[timings.index(nextclasstime)]}}</p>
         <p><strong>Time:</strong>{{nextclasstime}}</p>
     </section>
 
-    <script>
-function startAttendance() {
-                // Redirect to a different route using JavaScript
-                window.location.href = "/takeattendance";
-            }
-    </script>
 
 <footer id="footer">
     <div class="footer-container">
