@@ -108,11 +108,12 @@
             <input type="hidden" name="Batches" value="{{ Batches }}">
             <input type="hidden" name="total" value="{{ total }}">
             <button type="button" onclick="submitAttendance()">Start Attendance</button>
-            <button>Go to Home</button>
         </form>
+        <button><a href="/facultyprofile" style="text-decoration: none;">Go to Home</a></button>
 {% endif %}
         <script>
             function submitAttendance() {
+                alert("Attendance Started...");
                 document.getElementById("attendanceForm").submit();
             }
             function seeAttendance() {

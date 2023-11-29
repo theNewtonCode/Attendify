@@ -88,7 +88,9 @@ def about():
 
 students_path = "Attendify/Students"  # Replace with the actual path to the "students" directory
 
-
+@app.route('/addfaculty')
+def addfaculty():
+    return render_template('./addfaculty.html')
 
 @app.route('/addstudent', methods=['POST', 'GET'])
 def addstudent():
@@ -118,6 +120,26 @@ def addstudent():
    else:
        return redirect(url_for('index'))
 
+@app.route('/addtt', methods=['POST'])
+def add_timetable():
+    if request.method == 'POST':
+        faculty_username = request.form['facultyID']  # You need to get the faculty username from somewhere
+        class_timing = request.form['time']
+        classroom = request.form['courseid']
+        batch_name = request.form['batch']
+        year = request.form['year']
+        grp = request.form['group']
+        class_type = request.form['teachtype']
+
+        # Insert data into the database
+        cursor = mysql.connection.cursor()
+        cursor.execute("INSERT INTO class_details (faculty_username, class_timing, classroom, batch_name, year, grp, class_type) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                       (faculty_username, class_timing, classroom, batch_name, year, grp, class_type))
+
+        mysql.connection.commit()
+        cursor.close()
+
+        return redirect(url_for('addfaculty'))
 
 @app.route('/facultyprofile')
 def facultyprofile():
@@ -177,6 +199,7 @@ def admin():
 
 @app.route('/modeldetails')
 def modeldetails():
+
     if 'user_name' in session:
         if 'admin' in session['username']:
             return render_template('modeldetail.html', admin=session['user_name'])
@@ -236,7 +259,7 @@ def captureattendance():
 
         student_faces = face_cropped_from_list(classimages)
         main_list = recognize_faces(student_faces)
-
+        print(main_list)
         flat_list = [item for sublist in main_list for item in sublist]
 
         # Count the occurrences of each string
@@ -245,9 +268,8 @@ def captureattendance():
             count_dict[item] = count_dict.get(item, 0) + 1
 
         # Create a list of strings that occur more than 4 times
-        present_students = [key for key, value in count_dict.items() if value > 4]
+        present_students = [key for key, value in count_dict.items() if value > 2]
         print(present_students)
-        # print(present_students)
         # present_students = ['E21CSEU0130']
         total_students_data = len(present_students)
 
@@ -343,7 +365,7 @@ def gen_dataset(enrolment):
             file_path = os.path.join(student_folder, f"{enrolment}.{img_id}.jpg")
             cv2.imwrite(file_path, face)
 
-        if cv2.waitKey(1) == 15 or int(img_id) == 500:
+        if int(img_id) == 500:
             break
 
     cap.release()
